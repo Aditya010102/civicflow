@@ -1,0 +1,34 @@
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Java
+target/
+*.class
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+.angular/
+
+# Build
+build/
+
+# Docker
+docker-data/
+
+# IDE
+.vscode/
