@@ -10,16 +10,24 @@ public class Issue {
 
     private IssuePriority priority;
 
+    private IssueStatus status;
+
+    private static long issueCount = 0;
+
     public Issue(
             long id,
             String title,
             String description,
-            IssuePriority priority
+            IssuePriority priority,
+            IssueStatus status
     ) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.priority = priority;
+        this.status = status;
+
+        issueCount++;
     }
 
     public long getId() {
@@ -38,6 +46,13 @@ public class Issue {
         return priority;
     }
 
+    public IssueStatus getStatus() {
+        return status;
+    }
+
+    public static long getIssueCount() {
+        return issueCount;
+    }
     @Override
     public String toString() {
 
@@ -46,6 +61,7 @@ public class Issue {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", priority=" + priority +
+                ", status=" + status +
                 '}';
     }
 }
