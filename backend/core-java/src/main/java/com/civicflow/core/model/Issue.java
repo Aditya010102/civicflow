@@ -2,14 +2,11 @@ package com.civicflow.core.model;
 
 public class Issue {
 
-    private long id;
+    private final long id;
 
     private String title;
-
     private String description;
-
     private IssuePriority priority;
-
     private IssueStatus status;
 
     private static long issueCount = 0;
@@ -53,9 +50,9 @@ public class Issue {
     public static long getIssueCount() {
         return issueCount;
     }
+
     @Override
     public String toString() {
-
         return "Issue{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
@@ -63,5 +60,24 @@ public class Issue {
                 ", priority=" + priority +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Issue other)) {
+            return false;
+        }
+
+        return id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
     }
 }
