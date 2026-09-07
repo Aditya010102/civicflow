@@ -7,5 +7,29 @@ public enum IssueStatus {
     ASSIGNED,
     IN_PROGRESS,
     RESOLVED,
-    CLOSED
+    CLOSED;
+
+    public boolean canTransitionTo(IssueStatus next) {
+
+        return switch (this) {
+
+            case REPORTED ->
+                    next == ACKNOWLEDGED;
+
+            case ACKNOWLEDGED ->
+                    next == ASSIGNED;
+
+            case ASSIGNED ->
+                    next == IN_PROGRESS;
+
+            case IN_PROGRESS ->
+                    next == RESOLVED;
+
+            case RESOLVED ->
+                    next == CLOSED;
+
+            case CLOSED ->
+                    false;
+        };
+    }
 }

@@ -16,4 +16,18 @@ public enum IssuePriority {
     public int getSeverity() {
         return severity;
     }
+
+    public boolean requiresImmediateAttention() {
+        return this == HIGH
+                || this == CRITICAL;
+    }
+
+    public int escalationHours() {
+        return switch (this) {
+            case LOW -> 72;
+            case MEDIUM -> 48;
+            case HIGH -> 24;
+            case CRITICAL -> 4;
+        };
+    }
 }
