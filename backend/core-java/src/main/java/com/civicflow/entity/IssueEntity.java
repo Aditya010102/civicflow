@@ -11,11 +11,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import com.civicflow.entity.DepartmentEntity;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "issues")
+@EntityListeners(AuditingEntityListener.class)
 public class IssueEntity {
 
     @Id
@@ -36,9 +40,11 @@ public class IssueEntity {
     @Column(nullable = false)
     private IssueStatus status;
 
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     private Instant updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,7 +65,6 @@ public class IssueEntity {
         this.description = description;
         this.priority = priority;
         this.status = status;
-        this.createdAt = Instant.now();
     }
 
     public Long getId() {
@@ -92,6 +97,5 @@ public class IssueEntity {
 
     public void updateStatus(IssueStatus status) {
         this.status = status;
-        this.updatedAt = Instant.now();
     }
 }
