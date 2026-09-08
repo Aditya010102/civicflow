@@ -5,10 +5,15 @@ import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.service.IssueService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import com.civicflow.core.model.IssuePriority;
+import com.civicflow.core.model.IssueStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/issues")
@@ -32,9 +37,34 @@ public class IssueController {
     }
 
     @GetMapping
-    public List<IssueResponse> getAllIssues() {
+    public Page<IssueResponse> getAllIssues(
+            @RequestParam(required = false)
+            IssueStatus status,
 
-        return issueService.getAllIssues();
+            @RequestParam(required = false)
+            IssuePriority priority,
+
+            @RequestParam(required = false)
+            Long departmentId,
+
+            @RequestParam(required = false)
+            String search,
+
+            @PageableDefault(
+                    size = 20,
+                    sort = "createdAt",
+                    direction = Sort.Direction.DESC
+            )
+            Pageable pageable
+    ) {
+
+        return issueService.searchIssues(
+                status,
+                priority,
+                departmentId,
+                search,
+                pageable
+        );
     }
 
     @GetMapping("/{id}")

@@ -9,9 +9,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface IssueRepository
-        extends JpaRepository<IssueEntity, Long> {
+        extends JpaRepository<IssueEntity, Long>,
+        JpaSpecificationExecutor<IssueEntity> {
 
     // ---------- Derived Queries ----------
 

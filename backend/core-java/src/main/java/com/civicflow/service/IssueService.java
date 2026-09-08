@@ -8,9 +8,14 @@ import com.civicflow.entity.IssueEntity;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.mapper.IssueMapper;
 import com.civicflow.repository.IssueRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.civicflow.exception.IssueNotFoundException;
+import com.civicflow.core.model.IssuePriority;
+import com.civicflow.specification.IssueSpecifications;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -43,12 +48,75 @@ public class IssueService {
     }
 
     @Transactional(readOnly = true)
-    public List<IssueResponse> getAllIssues() {
+    public Page<IssueResponse> getAllIssues(
+            Pageable pageable
+    ) {
 
-        return issueRepository.findAll()
-                .stream()
-                .map(issueMapper::toResponse)
-                .toList();
+        return issueRepository
+                .findAll(pageable)
+                .map(issueMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<IssueResponse> searchIssues(
+            IssueStatus status,
+            IssuePriority priority,
+            Long departmentId,
+            String search,
+            Pageable pageable
+    ) {
+
+        Specification<IssueEntity> specification = null;
+
+        if (status != null) {
+            specification =
+                    IssueSpecifications.hasStatus(status);
+        }
+
+        if (priority != null) {
+            specification =
+                    specification == null
+                            ? IssueSpecifications.hasPriority(priority)
+                            : specification.and(
+                            IssueSpecifications.hasPriority(priority)
+                    );
+        }
+
+        if (departmentId != null) {
+            specification =
+                    specification == null
+                            ? IssueSpecifications.belongsToDepartment(
+                            departmentId
+                    )
+                            : specification.and(
+                            IssueSpecifications.belongsToDepartment(
+                                    departmentId
+                            )
+                    );
+        }
+
+        if (search != null && !search.isBlank()) {
+            specification =
+                    specification == null
+                            ? IssueSpecifications.titleOrDescriptionContains(
+                            search
+                    )
+                            : specification.and(
+                            IssueSpecifications.titleOrDescriptionContains(
+                                    search
+                            )
+                    );
+        }
+
+        Page<IssueEntity> page =
+                specification == null
+                        ? issueRepository.findAll(pageable)
+                        : issueRepository.findAll(
+                        specification,
+                        pageable
+                );
+
+        return page.map(issueMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
