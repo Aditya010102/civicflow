@@ -5,9 +5,12 @@ import com.civicflow.dto.CreateIssueRequest;
 import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.entity.IssueEntity;
+import com.civicflow.exception.InvalidIssueStatusTransitionException;
+import com.civicflow.mapper.IssueMapper;
 import com.civicflow.repository.IssueRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.civicflow.exception.IssueNotFoundException;
 
 import java.util.List;
 
@@ -15,11 +18,14 @@ import java.util.List;
 public class IssueService {
 
     private final IssueRepository issueRepository;
+    private final IssueMapper issueMapper;
 
     public IssueService(
-            IssueRepository issueRepository
+            IssueRepository issueRepository,
+            IssueMapper issueMapper
     ) {
         this.issueRepository = issueRepository;
+        this.issueMapper = issueMapper;
     }
 
     @Transactional
@@ -27,17 +33,13 @@ public class IssueService {
             CreateIssueRequest request
     ) {
 
-        IssueEntity issue = new IssueEntity(
-                request.getTitle(),
-                request.getDescription(),
-                request.getPriority(),
-                IssueStatus.REPORTED
-        );
+        IssueEntity issue =
+                issueMapper.toEntity(request);
 
         IssueEntity saved =
                 issueRepository.save(issue);
 
-        return toResponse(saved);
+        return issueMapper.toResponse(saved);
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +47,7 @@ public class IssueService {
 
         return issueRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(issueMapper::toResponse)
                 .toList();
     }
 
@@ -57,12 +59,10 @@ public class IssueService {
         IssueEntity issue =
                 issueRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Issue not found: " + id
-                                )
+                                new IssueNotFoundException(id)
                         );
 
-        return toResponse(issue);
+        return issueMapper.toResponse(issue);
     }
 
     @Transactional
@@ -74,9 +74,7 @@ public class IssueService {
         IssueEntity issue =
                 issueRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Issue not found: " + id
-                                )
+                                new IssueNotFoundException(id)
                         );
 
         IssueStatus currentStatus =
@@ -87,20 +85,17 @@ public class IssueService {
 
         if (!currentStatus.canTransitionTo(newStatus)) {
 
-            throw new IllegalStateException(
-                    "Invalid status transition: "
-                            + currentStatus
-                            + " -> "
-                            + newStatus
+            throw new InvalidIssueStatusTransitionException(
+                    currentStatus,
+                    newStatus
             );
         }
-
         issue.updateStatus(newStatus);
 
         IssueEntity saved =
                 issueRepository.save(issue);
 
-        return toResponse(saved);
+        return issueMapper.toResponse(saved);
     }
 
     @Transactional
@@ -108,26 +103,9 @@ public class IssueService {
 
         if (!issueRepository.existsById(id)) {
 
-            throw new RuntimeException(
-                    "Issue not found: " + id
-            );
+            throw new IssueNotFoundException(id);
         }
 
         issueRepository.deleteById(id);
-    }
-
-    private IssueResponse toResponse(
-            IssueEntity issue
-    ) {
-
-        return new IssueResponse(
-                issue.getId(),
-                issue.getTitle(),
-                issue.getDescription(),
-                issue.getPriority(),
-                issue.getStatus(),
-                issue.getCreatedAt(),
-                issue.getUpdatedAt()
-        );
     }
 }
