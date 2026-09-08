@@ -7,37 +7,51 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IssueRepository
         extends JpaRepository<IssueEntity, Long> {
 
-    @Query("""
-            SELECT i
-            FROM IssueEntity i
-            WHERE i.status = :status
-            """)
-    List<IssueEntity> findIssuesByStatus(
-            @Param("status") IssueStatus status
+    // ---------- Derived Queries ----------
+
+    List<IssueEntity> findByStatus(
+            IssueStatus status
     );
 
-    @Query("""
-            SELECT i
-            FROM IssueEntity i
-            WHERE i.priority = :priority
-            """)
-    List<IssueEntity> findIssuesByPriority(
-            @Param("priority") IssuePriority priority
+    List<IssueEntity> findByPriority(
+            IssuePriority priority
     );
 
-    @Query("""
-            SELECT i
-            FROM IssueEntity i
-            WHERE i.department.name = :departmentName
-            """)
-    List<IssueEntity> findIssuesByDepartmentName(
-            @Param("departmentName") String departmentName
+    List<IssueEntity> findByStatusAndPriority(
+            IssueStatus status,
+            IssuePriority priority
     );
+
+    List<IssueEntity> findByTitleContainingIgnoreCase(
+            String keyword
+    );
+
+    List<IssueEntity> findByDepartmentName(
+            String departmentName
+    );
+
+    List<IssueEntity> findByStatusIn(
+            Collection<IssueStatus> statuses
+    );
+
+    List<IssueEntity> findByStatusNot(
+            IssueStatus status
+    );
+
+    List<IssueEntity> findByDepartmentIsNull();
+
+    List<IssueEntity> findByStatusOrderByCreatedAtDesc(
+            IssueStatus status
+    );
+
+
+    // ---------- JPQL Queries ----------
 
     @Query("""
             SELECT i
@@ -56,5 +70,14 @@ public interface IssueRepository
     List<IssueEntity> findByStatusAndDepartment(
             @Param("status") IssueStatus status,
             @Param("departmentName") String departmentName
+    );
+
+    @Query("""
+            SELECT COUNT(i)
+            FROM IssueEntity i
+            WHERE i.status = :status
+            """)
+    long countIssuesByStatus(
+            @Param("status") IssueStatus status
     );
 }
