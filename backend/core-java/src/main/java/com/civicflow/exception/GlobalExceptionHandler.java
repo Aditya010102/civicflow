@@ -139,4 +139,24 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
     }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmailAlreadyExists(
+            EmailAlreadyExistsException exception,
+            HttpServletRequest request
+    ) {
+        ApiErrorResponse response =
+                new ApiErrorResponse(
+                        Instant.now(),
+                        HttpStatus.CONFLICT.value(),
+                        "Conflict",
+                        exception.getMessage(),
+                        request.getRequestURI(),
+                        Map.of()
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
 }
