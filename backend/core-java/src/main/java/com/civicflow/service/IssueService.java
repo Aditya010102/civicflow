@@ -1,26 +1,29 @@
 package com.civicflow.service;
 
+import com.civicflow.core.model.IssuePriority;
 import com.civicflow.core.model.IssueStatus;
 import com.civicflow.dto.CreateIssueRequest;
 import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.entity.IssueEntity;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
+import com.civicflow.exception.IssueNotFoundException;
 import com.civicflow.mapper.IssueMapper;
 import com.civicflow.repository.IssueRepository;
+import com.civicflow.specification.IssueSpecifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.civicflow.exception.IssueNotFoundException;
-import com.civicflow.core.model.IssuePriority;
-import com.civicflow.specification.IssueSpecifications;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.util.List;
 
 @Service
 public class IssueService {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(IssueService.class);
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
@@ -43,6 +46,12 @@ public class IssueService {
 
         IssueEntity saved =
                 issueRepository.save(issue);
+
+        logger.info(
+                "Issue created successfully: id={}, priority={}",
+                saved.getId(),
+                saved.getPriority()
+        );
 
         return issueMapper.toResponse(saved);
     }
@@ -151,13 +160,28 @@ public class IssueService {
         IssueStatus newStatus =
                 request.getStatus();
 
+        logger.info(
+                "Updating issue status: id={}, from={}, to={}",
+                id,
+                currentStatus,
+                newStatus
+        );
+
         if (!currentStatus.canTransitionTo(newStatus)) {
+
+            logger.warn(
+                    "Invalid issue status transition: id={}, from={}, to={}",
+                    id,
+                    currentStatus,
+                    newStatus
+            );
 
             throw new InvalidIssueStatusTransitionException(
                     currentStatus,
                     newStatus
             );
         }
+
         issue.updateStatus(newStatus);
 
         IssueEntity saved =
@@ -173,6 +197,11 @@ public class IssueService {
 
             throw new IssueNotFoundException(id);
         }
+
+        logger.info(
+                "Deleting issue: id={}",
+                id
+        );
 
         issueRepository.deleteById(id);
     }
