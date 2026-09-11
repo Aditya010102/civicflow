@@ -1,6 +1,7 @@
 package com.civicflow.controller;
 
 import com.civicflow.auth.AuthService;
+import com.civicflow.dto.LoginRequest;
 import com.civicflow.dto.RegisterRequest;
 import com.civicflow.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -23,5 +24,11 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request
     ) {
         return authService.register(request);
+    }
+    @PostMapping("/login")
+    public void login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        authService.authenticate(request);
     }
 }

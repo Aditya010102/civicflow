@@ -10,6 +10,9 @@ import com.civicflow.security.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.civicflow.dto.LoginRequest;
 
 @Service
 public class AuthService {
@@ -17,15 +20,18 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(
             UserRepository userRepository,
             UserMapper userMapper,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager=authenticationManager;
     }
 
     @Transactional
@@ -56,5 +62,14 @@ public class AuthService {
                 userRepository.save(user);
 
         return userMapper.toResponse(savedUser);
+    }
+    public void authenticate(LoginRequest request) {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail().trim().toLowerCase(),
+                        request.getPassword()
+                )
+        );
     }
 }
