@@ -1,9 +1,10 @@
 package com.civicflow.controller;
 
-import com.civicflow.auth.AuthService;
 import com.civicflow.dto.LoginRequest;
+import com.civicflow.dto.LoginResponse;
 import com.civicflow.dto.RegisterRequest;
 import com.civicflow.dto.UserResponse;
+import com.civicflow.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,11 @@ public class AuthController {
     ) {
         return authService.register(request);
     }
+
     @PostMapping("/login")
-    public void login(
+    public LoginResponse login(
             @Valid @RequestBody LoginRequest request
     ) {
-        authService.authenticate(request);
+        return authService.login(request);
     }
 }
