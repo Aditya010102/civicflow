@@ -9,6 +9,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.crypto.SecretKey;
+
+import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
@@ -40,7 +49,11 @@ public class SecurityConfig {
 
                         .anyRequest()
                         .authenticated()
-                );
+                )
+        .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwt -> {
+                })
+        );
 
         return http.build();
     }
@@ -51,5 +64,20 @@ public class SecurityConfig {
     ) throws Exception {
 
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(JwtProperties jwtProperties) {
+
+        SecretKey key =
+                Keys.hmacShaKeyFor(
+                        jwtProperties
+                                .getSecret()
+                                .getBytes(StandardCharsets.UTF_8)
+                );
+
+        return NimbusJwtDecoder
+                .withSecretKey(key)
+                .build();
     }
 }
