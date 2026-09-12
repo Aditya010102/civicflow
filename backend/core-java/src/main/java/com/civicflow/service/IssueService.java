@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Service
 public class IssueService {
@@ -35,7 +36,7 @@ public class IssueService {
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
     }
-
+    @PreAuthorize("hasAnyRole('CITIZEN', 'STAFF', 'ADMIN')")
     @Transactional
     public IssueResponse createIssue(
             CreateIssueRequest request
@@ -142,6 +143,7 @@ public class IssueService {
         return issueMapper.toResponse(issue);
     }
 
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     @Transactional
     public IssueResponse updateStatus(
             Long id,
@@ -190,6 +192,7 @@ public class IssueService {
         return issueMapper.toResponse(saved);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteIssue(Long id) {
 
