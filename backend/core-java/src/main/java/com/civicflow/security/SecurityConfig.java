@@ -18,6 +18,12 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.http.HttpMethod;
+
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
@@ -44,16 +50,40 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        .requestMatchers("/api/issues/**")
-                        .authenticated()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/issues"
+                        )
+                        .hasAnyRole("CITIZEN", "STAFF", "ADMIN")
 
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/issues",
+                                "/api/issues/**"
+                        )
+                        .hasAnyRole("CITIZEN", "STAFF", "ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/issues/*/status"
+                        )
+                        .hasAnyRole("STAFF", "ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/issues/**"
+                        )
+                        .hasRole("ADMIN")
                         .anyRequest()
                         .authenticated()
                 )
-        .oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwt -> {
-                })
-        );
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt ->
+                                jwt.jwtAuthenticationConverter(
+                                        jwtAuthenticationConverter()
+                                )
+                        )
+                );
 
         return http.build();
     }
@@ -79,5 +109,18 @@ public class SecurityConfig {
         return NimbusJwtDecoder
                 .withSecretKey(key)
                 .build();
+    }
+    @Bean
+    public Converter<Jwt, ? extends AbstractAuthenticationToken>
+    jwtAuthenticationConverter() {
+
+        JwtAuthenticationConverter converter =
+                new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(
+                new JwtRoleConverter()
+        );
+
+        return converter;
     }
 }
