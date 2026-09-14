@@ -1,12 +1,12 @@
 package com.civicflow.controller;
 
 import com.civicflow.core.model.IssuePriority;
+import com.civicflow.service.IssueService;
 import com.civicflow.core.model.IssueStatus;
 import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
-import com.civicflow.service.IssueService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
