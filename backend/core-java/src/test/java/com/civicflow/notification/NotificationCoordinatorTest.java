@@ -1,37 +1,78 @@
 package com.civicflow.notification;
 
+import com.civicflow.entity.NotificationEntity;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.CompletableFuture;
+
+import static org.mockito.Mockito.*;
 
 class NotificationCoordinatorTest {
 
     @Test
-    void shouldHandleNotificationFailure() {
+    void shouldSendNotificationSuccessfully() {
 
         NotificationService notificationService =
-                Mockito.mock(NotificationService.class);
+                mock(NotificationService.class);
 
-        Mockito.when(
+        NotificationPersistenceService
+                notificationPersistenceService =
+                mock(NotificationPersistenceService.class);
+
+        NotificationEntity notification =
+                mock(NotificationEntity.class);
+
+        when(
+                notificationPersistenceService.createPending(
+                        1L,
+                        "citizen@example.com",
+                        "Issue created"
+                )
+        ).thenReturn(notification);
+
+        when(notification.getId())
+                .thenReturn(100L);
+
+        when(
                 notificationService.send(
-                        Mockito.anyString(),
-                        Mockito.anyString()
+                        "citizen@example.com",
+                        "Issue created"
                 )
         ).thenReturn(
-                CompletableFuture.failedFuture(
-                        new RuntimeException(
-                                "Notification provider unavailable"
-                        )
-                )
+                CompletableFuture.completedFuture(true)
         );
 
         NotificationCoordinator coordinator =
                 new NotificationCoordinator(
-                        notificationService
+                        notificationService,
+                        notificationPersistenceService
                 );
 
         coordinator.sendIssueCreatedNotification(
+                1L,
+                "citizen@example.com",
+                "Issue created"
+        );
+
+        verify(
+                notificationPersistenceService
+        ).createPending(
+                1L,
+                "citizen@example.com",
+                "Issue created"
+        );
+
+        verify(
+                notificationPersistenceService
+        ).incrementAttempt(100L);
+
+        verify(
+                notificationPersistenceService
+        ).markSent(100L);
+
+        verify(
+                notificationService
+        ).send(
                 "citizen@example.com",
                 "Issue created"
         );

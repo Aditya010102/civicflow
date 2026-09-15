@@ -2,36 +2,37 @@ package com.civicflow.event;
 
 import com.civicflow.notification.NotificationCoordinator;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
+import static org.mockito.Mockito.*;
 
 class IssueCreatedEventListenerTest {
 
     @Test
-    void shouldDelegateNotification() {
+    void shouldDelegateIssueCreatedEventToCoordinator() {
 
-        NotificationCoordinator coordinator =
-                Mockito.mock(
-                        NotificationCoordinator.class
-                );
+        NotificationCoordinator notificationCoordinator =
+                mock(NotificationCoordinator.class);
 
         IssueCreatedEventListener listener =
                 new IssueCreatedEventListener(
-                        coordinator
+                        notificationCoordinator
                 );
 
         IssueCreatedEvent event =
                 new IssueCreatedEvent(
-                        100L,
+                        1L,
                         "citizen@example.com",
-                        "Issue created"
+                        "Your CivicFlow issue has been created."
                 );
 
         listener.handleIssueCreated(event);
 
-        Mockito.verify(coordinator)
-                .sendIssueCreatedNotification(
-                        "citizen@example.com",
-                        "Issue created"
-                );
+        verify(
+                notificationCoordinator
+        ).sendIssueCreatedNotification(
+                1L,
+                "citizen@example.com",
+                "Your CivicFlow issue has been created."
+        );
     }
 }

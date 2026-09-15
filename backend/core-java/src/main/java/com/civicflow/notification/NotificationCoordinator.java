@@ -1,5 +1,6 @@
 package com.civicflow.notification;
 
+import com.civicflow.entity.NotificationEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,31 +17,58 @@ public class NotificationCoordinator {
 
     private final NotificationService notificationService;
 
+    private final NotificationPersistenceService
+            notificationPersistenceService;
+
     public NotificationCoordinator(
-            NotificationService notificationService
+            NotificationService notificationService,
+            NotificationPersistenceService
+                    notificationPersistenceService
     ) {
-        this.notificationService = notificationService;
+        this.notificationService =
+                notificationService;
+
+        this.notificationPersistenceService =
+                notificationPersistenceService;
     }
 
     public void sendIssueCreatedNotification(
+            Long issueId,
             String recipient,
             String message
     ) {
 
-        CompletableFuture<Boolean> future =
+        NotificationEntity notification =
+                notificationPersistenceService.createPending(
+                        issueId,
+                        recipient,
+                        message
+                );
+
+        notificationPersistenceService.incrementAttempt(
+                notification.getId()
+        );
+
+        CompletableFuture<Boolean> notificationFuture =
                 notificationService.send(
                         recipient,
                         message
                 );
 
-        future.whenComplete(
+        notificationFuture.whenComplete(
                 (success, exception) -> {
 
                     if (exception != null) {
 
+                        notificationPersistenceService
+                                .markFailed(
+                                        notification.getId()
+                                );
+
                         logger.error(
-                                "Issue notification failed: recipient={}",
-                                recipient,
+                                "Notification failed: notificationId={}, issueId={}",
+                                notification.getId(),
+                                issueId,
                                 exception
                         );
 
@@ -49,16 +77,28 @@ public class NotificationCoordinator {
 
                     if (Boolean.TRUE.equals(success)) {
 
+                        notificationPersistenceService
+                                .markSent(
+                                        notification.getId()
+                                );
+
                         logger.info(
-                                "Issue notification completed successfully: recipient={}",
-                                recipient
+                                "Notification sent: notificationId={}, issueId={}",
+                                notification.getId(),
+                                issueId
                         );
 
                     } else {
 
+                        notificationPersistenceService
+                                .markFailed(
+                                        notification.getId()
+                                );
+
                         logger.warn(
-                                "Issue notification was not successful: recipient={}",
-                                recipient
+                                "Notification unsuccessful: notificationId={}, issueId={}",
+                                notification.getId(),
+                                issueId
                         );
                     }
                 }

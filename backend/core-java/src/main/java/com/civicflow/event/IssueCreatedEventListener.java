@@ -24,10 +24,10 @@ public class IssueCreatedEventListener {
             IssueCreatedEvent event
     ) {
 
-        notificationCoordinator
-                .sendIssueCreatedNotification(
-                        event.recipient(),
-                        event.message()
-                );
+        notificationCoordinator.sendIssueCreatedNotification(
+                event.issueId(),
+                event.recipient(),
+                event.message()
+        );
     }
 }
