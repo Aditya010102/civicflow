@@ -34,6 +34,7 @@ class IssueIntegrationTest {
     static void configureDatabase(
             DynamicPropertyRegistry registry
     ) {
+
         registry.add(
                 "spring.datasource.url",
                 () -> postgres.getJdbcUrl()
@@ -57,6 +58,10 @@ class IssueIntegrationTest {
     }
 
     @Autowired
+    private TestIssueCreatedEventListener
+            testEventListener;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Test
@@ -64,9 +69,14 @@ class IssueIntegrationTest {
 
         mockMvc.perform(
                         post("/api/issues")
-                                .with(user("test-user").roles("CITIZEN"))
+                                .with(
+                                        user("test-user")
+                                                .roles("CITIZEN")
+                                )
                                 .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
+                                .contentType(
+                                        MediaType.APPLICATION_JSON
+                                )
                                 .content("""
                                         {
                                           "title": "Water leakage near park",
@@ -77,13 +87,21 @@ class IssueIntegrationTest {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.title")
-                        .value("Water leakage near park"))
-                .andExpect(jsonPath("$.priority")
-                        .value("HIGH"))
-                .andExpect(jsonPath("$.status")
-                        .value("REPORTED"))
-                .andExpect(jsonPath("$.createdAt")
-                        .exists());
+                .andExpect(
+                        jsonPath("$.title")
+                                .value("Water leakage near park")
+                )
+                .andExpect(
+                        jsonPath("$.priority")
+                                .value("HIGH")
+                )
+                .andExpect(
+                        jsonPath("$.status")
+                                .value("REPORTED")
+                )
+                .andExpect(
+                        jsonPath("$.createdAt")
+                                .exists()
+                );
     }
 }
