@@ -9,6 +9,7 @@ import com.civicflow.entity.IssueEntity;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
 import com.civicflow.mapper.IssueMapper;
+import com.civicflow.notification.NotificationCoordinator;
 import com.civicflow.repository.IssueRepository;
 import com.civicflow.specification.IssueSpecifications;
 import org.slf4j.Logger;
@@ -29,13 +30,17 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
+    private final NotificationCoordinator notificationCoordinator;
 
     public IssueService(
             IssueRepository issueRepository,
-            IssueMapper issueMapper
+            IssueMapper issueMapper,
+            NotificationCoordinator notificationCoordinator
     ) {
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
+        this.notificationCoordinator=notificationCoordinator;
+
     }
     @PreAuthorize("hasAnyRole('CITIZEN', 'STAFF', 'ADMIN')")
     @CacheEvict(
