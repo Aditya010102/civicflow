@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.cache.annotation.CacheEvict;
+import com.civicflow.event.IssueCreatedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Service
 public class IssueService {
@@ -30,16 +32,19 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
-    private final NotificationCoordinator notificationCoordinator;
+    //private final NotificationCoordinator notificationCoordinator;
+    private final ApplicationEventPublisher eventPublisher;
 
     public IssueService(
             IssueRepository issueRepository,
             IssueMapper issueMapper,
-            NotificationCoordinator notificationCoordinator
+//            NotificationCoordinator notificationCoordinator,
+            ApplicationEventPublisher eventPublisher
     ) {
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
-        this.notificationCoordinator=notificationCoordinator;
+//        this.notificationCoordinator=notificationCoordinator;
+        this.eventPublisher = eventPublisher;
 
     }
     @PreAuthorize("hasAnyRole('CITIZEN', 'STAFF', 'ADMIN')")
@@ -62,6 +67,15 @@ public class IssueService {
                 "Issue created successfully: id={}, priority={}",
                 saved.getId(),
                 saved.getPriority()
+        );
+
+        eventPublisher.publishEvent(
+                new IssueCreatedEvent(
+                        saved.getId(),
+                        "citizen@example.com",
+                        "Your CivicFlow issue has been created. Issue ID: "
+                                + saved.getId()
+                )
         );
 
         return issueMapper.toResponse(saved);
