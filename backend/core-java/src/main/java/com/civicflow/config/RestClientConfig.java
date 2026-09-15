@@ -1,20 +1,22 @@
 package com.civicflow.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
+@EnableConfigurationProperties(
+        DepartmentServiceProperties.class
+)
 public class RestClientConfig {
 
     @Bean
     public RestClient departmentRestClient(
-            @Value("${civicflow.services.department.base-url}")
-            String departmentBaseUrl
+            DepartmentServiceProperties properties
     ) {
         return RestClient.builder()
-                .baseUrl(departmentBaseUrl)
+                .baseUrl(properties.getBaseUrl())
                 .build();
     }
 }
