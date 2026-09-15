@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Profile("prod")
@@ -18,15 +19,18 @@ public class ProductionNotificationService
 
     @Async("notificationExecutor")
     @Override
-    public void send(
+    public CompletableFuture<Boolean> send(
             String recipient,
             String message
     ) {
+
         logger.info(
                 "[PRODUCTION NOTIFICATION] thread={}, recipient={}, message={}",
                 Thread.currentThread().getName(),
                 recipient,
                 message
         );
+
+        return CompletableFuture.completedFuture(true);
     }
 }

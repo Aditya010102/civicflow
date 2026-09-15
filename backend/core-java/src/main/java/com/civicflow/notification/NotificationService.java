@@ -1,8 +1,10 @@
 package com.civicflow.notification;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface NotificationService {
 
-    void send(
+    CompletableFuture<Boolean> send(
             String recipient,
             String message
     );
