@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Service
 public class IssueService {
@@ -37,6 +38,10 @@ public class IssueService {
         this.issueMapper = issueMapper;
     }
     @PreAuthorize("hasAnyRole('CITIZEN', 'STAFF', 'ADMIN')")
+    @CacheEvict(
+            value = "dashboard-summary",
+            key = "'global'"
+    )
     @Transactional
     public IssueResponse createIssue(
             CreateIssueRequest request
@@ -144,6 +149,10 @@ public class IssueService {
     }
 
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    @CacheEvict(
+            value = "dashboard-summary",
+            key = "'global'"
+    )
     @Transactional
     public IssueResponse updateStatus(
             Long id,
@@ -193,6 +202,10 @@ public class IssueService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(
+            value = "dashboard-summary",
+            key = "'global'"
+    )
     @Transactional
     public void deleteIssue(Long id) {
 
