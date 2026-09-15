@@ -28,7 +28,6 @@
 
     <!-- Manage Testcontainers dependency versions -->
     <dependencyManagement>
-
         <dependencies>
 
             <dependency>
