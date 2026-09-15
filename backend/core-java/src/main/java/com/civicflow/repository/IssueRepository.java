@@ -82,4 +82,5 @@ public interface IssueRepository
     long countIssuesByStatus(
             @Param("status") IssueStatus status
     );
+    long countByPriority(IssuePriority priority);
 }

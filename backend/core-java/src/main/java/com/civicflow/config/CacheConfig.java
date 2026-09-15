@@ -74,13 +74,22 @@ public class CacheConfig {
                                         )
                         );
 
+        RedisCacheConfiguration dashboardConfig =
+                defaultConfig
+                        .entryTtl(
+                                Duration.ofSeconds(30)
+                        );
+
         return RedisCacheManager
                 .builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(
                         Map.of(
                                 "departments",
-                                departmentsConfig
+                                departmentsConfig,
+
+                                "dashboard-summary",
+                                dashboardConfig
                         )
                 )
                 .build();
