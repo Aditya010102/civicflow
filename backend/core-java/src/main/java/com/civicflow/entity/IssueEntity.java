@@ -2,15 +2,15 @@ package com.civicflow.entity;
 
 import com.civicflow.core.model.IssuePriority;
 import com.civicflow.core.model.IssueStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import com.civicflow.entity.DepartmentEntity;
+import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,16 +40,15 @@ public class IssueEntity {
     @Column(nullable = false)
     private IssueStatus status;
 
+    @Column(name = "department_id")
+    private Long departmentId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
     private Instant updatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
-    private DepartmentEntity department;
 
     protected IssueEntity() {
         // Required by JPA
@@ -87,12 +86,20 @@ public class IssueEntity {
         return status;
     }
 
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void assignDepartment(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public void updateStatus(IssueStatus status) {

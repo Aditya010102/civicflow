@@ -6,23 +6,22 @@ import com.civicflow.dto.CreateIssueRequest;
 import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.entity.IssueEntity;
+import com.civicflow.event.IssueCreatedEvent;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
 import com.civicflow.mapper.IssueMapper;
-import com.civicflow.notification.NotificationCoordinator;
 import com.civicflow.repository.IssueRepository;
 import com.civicflow.specification.IssueSpecifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.cache.annotation.CacheEvict;
-import com.civicflow.event.IssueCreatedEvent;
-import org.springframework.context.ApplicationEventPublisher;
 
 @Service
 public class IssueService {
@@ -32,21 +31,18 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
-    //private final NotificationCoordinator notificationCoordinator;
     private final ApplicationEventPublisher eventPublisher;
 
     public IssueService(
             IssueRepository issueRepository,
             IssueMapper issueMapper,
-//            NotificationCoordinator notificationCoordinator,
             ApplicationEventPublisher eventPublisher
     ) {
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
-//        this.notificationCoordinator=notificationCoordinator;
         this.eventPublisher = eventPublisher;
-
     }
+
     @PreAuthorize("hasAnyRole('CITIZEN', 'STAFF', 'ADMIN')")
     @CacheEvict(
             value = "dashboard-summary",

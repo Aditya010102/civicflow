@@ -12,6 +12,7 @@ public class IssueResponse {
     private String description;
     private IssuePriority priority;
     private IssueStatus status;
+    private Long departmentId;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -21,6 +22,7 @@ public class IssueResponse {
             String description,
             IssuePriority priority,
             IssueStatus status,
+            Long departmentId,
             Instant createdAt,
             Instant updatedAt
     ) {
@@ -29,6 +31,7 @@ public class IssueResponse {
         this.description = description;
         this.priority = priority;
         this.status = status;
+        this.departmentId = departmentId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -51,6 +54,10 @@ public class IssueResponse {
 
     public IssueStatus getStatus() {
         return status;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
     public Instant getCreatedAt() {

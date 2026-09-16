@@ -31,6 +31,7 @@ public class IssueMapper {
                 issue.getDescription(),
                 issue.getPriority(),
                 issue.getStatus(),
+                issue.getDepartmentId(),
                 issue.getCreatedAt(),
                 issue.getUpdatedAt()
         );

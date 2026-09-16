@@ -1,12 +1,12 @@
 package com.civicflow.controller;
 
 import com.civicflow.core.model.IssuePriority;
-import com.civicflow.service.IssueService;
 import com.civicflow.core.model.IssueStatus;
 import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
+import com.civicflow.service.IssueService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -42,6 +42,8 @@ class IssueControllerTest {
     @Test
     void shouldCreateIssue() throws Exception {
 
+        Instant createdAt = Instant.now();
+
         IssueResponse response =
                 new IssueResponse(
                         1L,
@@ -49,7 +51,8 @@ class IssueControllerTest {
                         "Water pipe is leaking near the main road",
                         IssuePriority.HIGH,
                         IssueStatus.REPORTED,
-                        Instant.now(),
+                        null,
+                        createdAt,
                         null
                 );
 
@@ -114,6 +117,8 @@ class IssueControllerTest {
     void shouldReturnPaginatedIssues()
             throws Exception {
 
+        Instant createdAt = Instant.now();
+
         IssueResponse response =
                 new IssueResponse(
                         1L,
@@ -121,7 +126,8 @@ class IssueControllerTest {
                         "Streetlight is not working",
                         IssuePriority.MEDIUM,
                         IssueStatus.REPORTED,
-                        Instant.now(),
+                        null,
+                        createdAt,
                         null
                 );
 
@@ -166,6 +172,9 @@ class IssueControllerTest {
     void shouldUpdateIssueStatus()
             throws Exception {
 
+        Instant createdAt = Instant.now();
+        Instant updatedAt = Instant.now();
+
         IssueResponse response =
                 new IssueResponse(
                         1L,
@@ -173,8 +182,9 @@ class IssueControllerTest {
                         "Streetlight is not working",
                         IssuePriority.MEDIUM,
                         IssueStatus.ACKNOWLEDGED,
-                        Instant.now(),
-                        Instant.now()
+                        null,
+                        createdAt,
+                        updatedAt
                 );
 
         when(issueService.updateStatus(

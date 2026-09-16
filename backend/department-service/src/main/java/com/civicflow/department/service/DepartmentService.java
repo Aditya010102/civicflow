@@ -2,6 +2,7 @@ package com.civicflow.department.service;
 
 import com.civicflow.department.dto.DepartmentResponse;
 import com.civicflow.department.entity.DepartmentEntity;
+import com.civicflow.department.exception.DepartmentNotFoundException;
 import com.civicflow.department.mapper.DepartmentMapper;
 import com.civicflow.department.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,6 @@ public class DepartmentService {
                 .map(departmentMapper::toResponse)
                 .toList();
     }
-
     @Transactional(readOnly = true)
     public DepartmentResponse getDepartmentById(
             Long id
@@ -41,7 +41,9 @@ public class DepartmentService {
         DepartmentEntity department =
                 departmentRepository
                         .findById(id)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+                                new DepartmentNotFoundException(id)
+                        );
 
         return departmentMapper.toResponse(
                 department

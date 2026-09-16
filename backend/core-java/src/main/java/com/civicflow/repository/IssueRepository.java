@@ -4,18 +4,16 @@ import com.civicflow.core.model.IssuePriority;
 import com.civicflow.core.model.IssueStatus;
 import com.civicflow.entity.IssueEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface IssueRepository
         extends JpaRepository<IssueEntity, Long>,
         JpaSpecificationExecutor<IssueEntity> {
-
-    // ---------- Derived Queries ----------
 
     List<IssueEntity> findByStatus(
             IssueStatus status
@@ -34,10 +32,6 @@ public interface IssueRepository
             String keyword
     );
 
-    List<IssueEntity> findByDepartmentName(
-            String departmentName
-    );
-
     List<IssueEntity> findByStatusIn(
             Collection<IssueStatus> statuses
     );
@@ -46,32 +40,34 @@ public interface IssueRepository
             IssueStatus status
     );
 
-    List<IssueEntity> findByDepartmentIsNull();
+    List<IssueEntity> findByDepartmentId(
+            Long departmentId
+    );
+
+    List<IssueEntity> findByDepartmentIdIsNull();
 
     List<IssueEntity> findByStatusOrderByCreatedAtDesc(
             IssueStatus status
     );
 
-
-    // ---------- JPQL Queries ----------
-
     @Query("""
             SELECT i
             FROM IssueEntity i
-            JOIN FETCH i.department
+            WHERE i.departmentId = :departmentId
             """)
-    List<IssueEntity> findAllWithDepartment();
+    List<IssueEntity> findIssuesByDepartmentId(
+            @Param("departmentId") Long departmentId
+    );
 
     @Query("""
             SELECT i
             FROM IssueEntity i
-            JOIN FETCH i.department d
             WHERE i.status = :status
-            AND d.name = :departmentName
+            AND i.departmentId = :departmentId
             """)
-    List<IssueEntity> findByStatusAndDepartment(
+    List<IssueEntity> findByStatusAndDepartmentId(
             @Param("status") IssueStatus status,
-            @Param("departmentName") String departmentName
+            @Param("departmentId") Long departmentId
     );
 
     @Query("""
@@ -82,5 +78,8 @@ public interface IssueRepository
     long countIssuesByStatus(
             @Param("status") IssueStatus status
     );
-    long countByPriority(IssuePriority priority);
+
+    long countByPriority(
+            IssuePriority priority
+    );
 }
