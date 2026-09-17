@@ -8,9 +8,18 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import jakarta.persistence.Index;
 
 @Entity
-@Table(name = "issues")
+@Table(
+        name = "issues",
+        indexes = {
+                @Index(name = "idx_issues_status", columnList = "status"),
+                @Index(name = "idx_issues_priority", columnList = "priority"),
+                @Index(name = "idx_issues_department_id", columnList = "department_id"),
+                @Index(name = "idx_issues_created_at", columnList = "created_at")
+        }
+)
 @EntityListeners(AuditingEntityListener.class)
 public class IssueEntity {
 
