@@ -2,15 +2,7 @@ package com.civicflow.entity;
 
 import com.civicflow.core.model.IssuePriority;
 import com.civicflow.core.model.IssueStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,6 +31,10 @@ public class IssueEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private IssueStatus status;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 
     @Column(name = "department_id")
     private Long departmentId;
@@ -84,6 +80,10 @@ public class IssueEntity {
 
     public IssueStatus getStatus() {
         return status;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
     public Long getDepartmentId() {
