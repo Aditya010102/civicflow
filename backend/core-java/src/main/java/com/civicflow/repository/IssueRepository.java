@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
+
+
+import java.util.Optional;
 
 import java.util.Collection;
 import java.util.List;
@@ -81,5 +86,14 @@ public interface IssueRepository
 
     long countByPriority(
             IssuePriority priority
+    );
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        SELECT i
+        FROM IssueEntity i
+        WHERE i.id = :id
+        """)
+    Optional<IssueEntity> findByIdForUpdate(
+            @Param("id") Long id
     );
 }
