@@ -6,8 +6,12 @@ import com.civicflow.dto.IssueResponse;
 import com.civicflow.dto.UpdateIssueStatusRequest;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
+import com.civicflow.ratelimit.RateLimitService;
 import com.civicflow.service.IssueService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
@@ -21,12 +25,15 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +45,16 @@ class IssueControllerTest {
 
     @MockitoBean
     private IssueService issueService;
+
+    @MockitoBean
+    private RateLimitService rateLimitService;
+
+    @BeforeEach
+    void allowRequestsThroughRateLimit() {
+
+        when(rateLimitService.isAllowed(anyString()))
+                .thenReturn(true);
+    }
 
     @Test
     void shouldCreateIssue() throws Exception {
