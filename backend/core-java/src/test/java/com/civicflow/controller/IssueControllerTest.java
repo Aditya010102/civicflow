@@ -60,7 +60,7 @@ class IssueControllerTest {
                 .thenReturn(response);
 
         mockMvc.perform(
-                        post("/api/issues")
+                        post("/api/v1/issues")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -85,7 +85,7 @@ class IssueControllerTest {
             throws Exception {
 
         mockMvc.perform(
-                        post("/api/issues")
+                        post("/api/v1/issues")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -108,7 +108,7 @@ class IssueControllerTest {
                 );
 
         mockMvc.perform(
-                        get("/api/issues/999")
+                        get("/api/v1/issues/999")
                 )
                 .andExpect(status().isNotFound());
     }
@@ -147,7 +147,7 @@ class IssueControllerTest {
         )).thenReturn(page);
 
         mockMvc.perform(
-                        get("/api/issues")
+                        get("/api/v1/issues")
                                 .param("status", "REPORTED")
                                 .param("priority", "MEDIUM")
                                 .param("page", "0")
@@ -193,7 +193,7 @@ class IssueControllerTest {
         )).thenReturn(response);
 
         mockMvc.perform(
-                        put("/api/issues/1/status")
+                        put("/api/v1/issues/1/status")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -223,7 +223,7 @@ class IssueControllerTest {
         );
 
         mockMvc.perform(
-                        put("/api/issues/1/status")
+                        put("/api/v1/issues/1/status")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {

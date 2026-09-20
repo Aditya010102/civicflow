@@ -23,7 +23,7 @@ class SecurityAuthorizationIntegrationTest {
     void anonymousUserShouldReceive401() throws Exception {
 
         mockMvc.perform(
-                        get("/api/issues")
+                        get("/api/v1/issues")
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -32,7 +32,7 @@ class SecurityAuthorizationIntegrationTest {
     void citizenShouldAccessIssues() throws Exception {
 
         mockMvc.perform(
-                        get("/api/issues")
+                        get("/api/v1/issues")
                                 .with(
                                         jwt()
                                                 .authorities(
@@ -49,7 +49,7 @@ class SecurityAuthorizationIntegrationTest {
     void citizenShouldNotDeleteIssue() throws Exception {
 
         mockMvc.perform(
-                        delete("/api/issues/1")
+                        delete("/api/v1/issues/1")
                                 .with(
                                         jwt()
                                                 .authorities(
@@ -66,7 +66,7 @@ class SecurityAuthorizationIntegrationTest {
     void staffShouldNotDeleteIssue() throws Exception {
 
         mockMvc.perform(
-                        delete("/api/issues/1")
+                        delete("/api/v1/issues/1")
                                 .with(
                                         jwt()
                                                 .authorities(
@@ -83,7 +83,7 @@ class SecurityAuthorizationIntegrationTest {
     void staffShouldAccessStatusEndpoint() throws Exception {
 
         mockMvc.perform(
-                        put("/api/issues/1/status")
+                        put("/api/v1/issues/1/status")
                                 .contentType("application/json")
                                 .content("""
                                 {
@@ -106,7 +106,7 @@ class SecurityAuthorizationIntegrationTest {
     void adminShouldBeAllowedToDelete() throws Exception {
 
         mockMvc.perform(
-                        delete("/api/issues/999999")
+                        delete("/api/v1/issues/999999")
                                 .with(
                                         jwt()
                                                 .authorities(
@@ -126,7 +126,7 @@ class SecurityAuthorizationIntegrationTest {
                 "user-" + System.nanoTime() + "@example.com";
 
         mockMvc.perform(
-                        post("/api/auth/register")
+                        post("/api/v1/auth/register")
                                 .contentType("application/json")
                                 .content("""
                                 {

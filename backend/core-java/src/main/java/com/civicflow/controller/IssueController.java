@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/issues")
+@RequestMapping("/api/v1/issues")
 @Tag(
         name = "Issues",
         description = "Operations for managing civic issues"

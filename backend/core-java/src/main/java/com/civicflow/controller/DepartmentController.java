@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping("/api/v1/departments")
 public class DepartmentController {
 
     private final DepartmentService departmentService;

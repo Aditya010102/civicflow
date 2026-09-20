@@ -68,7 +68,7 @@ class IssueIntegrationTest {
     void shouldCreateIssueThroughApi() throws Exception {
 
         mockMvc.perform(
-                        post("/api/issues")
+                        post("/api/v1/issues")
                                 .with(
                                         user("test-user")
                                                 .roles("CITIZEN")
