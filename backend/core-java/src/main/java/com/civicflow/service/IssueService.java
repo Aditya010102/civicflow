@@ -10,6 +10,7 @@ import com.civicflow.event.IssueCreatedEvent;
 import com.civicflow.exception.InvalidIssueStatusTransitionException;
 import com.civicflow.exception.IssueNotFoundException;
 import com.civicflow.mapper.IssueMapper;
+import com.civicflow.observability.IssueMetrics;
 import com.civicflow.repository.IssueRepository;
 import com.civicflow.specification.IssueSpecifications;
 import org.slf4j.Logger;
@@ -31,15 +32,18 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
+    private final IssueMetrics issueMetrics;
     private final ApplicationEventPublisher eventPublisher;
 
     public IssueService(
             IssueRepository issueRepository,
             IssueMapper issueMapper,
+            IssueMetrics issueMetrics,
             ApplicationEventPublisher eventPublisher
     ) {
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
+        this.issueMetrics = issueMetrics;
         this.eventPublisher = eventPublisher;
     }
 
@@ -58,6 +62,8 @@ public class IssueService {
 
         IssueEntity saved =
                 issueRepository.save(issue);
+
+        issueMetrics.recordIssueCreated();
 
         logger.info(
                 "Issue created successfully: id={}, priority={}",
