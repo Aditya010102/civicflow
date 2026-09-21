@@ -7,6 +7,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
+import org.slf4j.MDC;
+import org.springframework.core.task.TaskDecorator;
+
+import java.util.Map;
+
 @Configuration
 @EnableAsync
 public class AsyncConfig {
@@ -25,11 +30,43 @@ public class AsyncConfig {
                 "civicflow-notification-"
         );
 
+        executor.setTaskDecorator(
+                mdcTaskDecorator()
+        );
+
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(30);
 
         executor.initialize();
 
         return executor;
+    }
+
+    @Bean
+    public TaskDecorator mdcTaskDecorator() {
+
+        return runnable -> {
+
+            Map<String, String> contextMap =
+                    MDC.getCopyOfContextMap();
+
+            return () -> {
+
+                try {
+
+                    if (contextMap != null) {
+                        MDC.setContextMap(
+                                contextMap
+                        );
+                    }
+
+                    runnable.run();
+
+                } finally {
+
+                    MDC.clear();
+                }
+            };
+        };
     }
 }
