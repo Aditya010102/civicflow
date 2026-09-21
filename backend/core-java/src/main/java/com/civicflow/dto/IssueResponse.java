@@ -2,18 +2,63 @@ package com.civicflow.dto;
 
 import com.civicflow.core.model.IssuePriority;
 import com.civicflow.core.model.IssueStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 
+@Schema(
+        description = "Response representation of a civic issue"
+)
 public class IssueResponse {
 
+    @Schema(
+            description = "Unique issue identifier",
+            example = "15"
+    )
     private Long id;
+
+    @Schema(
+            description = "Short title of the civic issue",
+            example = "Broken streetlight near main road"
+    )
     private String title;
+
+    @Schema(
+            description = "Detailed description of the civic issue",
+            example =
+                    "The streetlight has not been working "
+                            + "for three days."
+    )
     private String description;
+
+    @Schema(
+            description = "Priority assigned to the issue",
+            example = "HIGH"
+    )
     private IssuePriority priority;
+
+    @Schema(
+            description = "Current workflow status of the issue",
+            example = "REPORTED"
+    )
     private IssueStatus status;
+
+    @Schema(
+            description = "ID of the department assigned to the issue",
+            example = "3"
+    )
     private Long departmentId;
+
+    @Schema(
+            description = "Timestamp when the issue was created",
+            example = "2026-09-22T10:30:00Z"
+    )
     private Instant createdAt;
+
+    @Schema(
+            description = "Timestamp when the issue was last updated",
+            example = "2026-09-22T11:15:00Z"
+    )
     private Instant updatedAt;
 
     public IssueResponse(

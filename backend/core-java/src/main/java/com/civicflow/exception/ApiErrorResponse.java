@@ -1,8 +1,12 @@
 package com.civicflow.exception;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.util.Map;
-
+@Schema(
+        description = "Standard CivicFlow API error response"
+)
 public class ApiErrorResponse {
 
     private Instant timestamp;

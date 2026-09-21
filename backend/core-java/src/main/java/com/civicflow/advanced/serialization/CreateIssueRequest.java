@@ -1,11 +1,26 @@
 package com.civicflow.advanced.serialization;
 
 import com.civicflow.core.model.IssuePriority;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(
+        description = "Request payload for creating a civic issue"
+)
 public class CreateIssueRequest {
-
+    @Schema(
+            description = "Short title describing the civic issue",
+            example = "Broken streetlight near main road"
+    )
     private String title;
+    @Schema(
+            description = "Detailed description of the reported issue",
+            example = "The streetlight has not been working for three days."
+    )
     private String description;
+    @Schema(
+            description = "Priority assigned to the issue",
+            example = "HIGH"
+    )
     private IssuePriority priority;
 
     public CreateIssueRequest() {
