@@ -38,6 +38,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
 
+                .cors(cors -> {})
+
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
@@ -56,29 +58,42 @@ public class SecurityConfig {
                                 HttpMethod.POST,
                                 "/api/v1/issues"
                         )
-                        .hasAnyRole("CITIZEN", "STAFF", "ADMIN")
+                        .hasAnyRole(
+                                "CITIZEN",
+                                "STAFF",
+                                "ADMIN"
+                        )
 
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/issues",
                                 "/api/v1/issues/**"
                         )
-                        .hasAnyRole("CITIZEN", "STAFF", "ADMIN")
+                        .hasAnyRole(
+                                "CITIZEN",
+                                "STAFF",
+                                "ADMIN"
+                        )
 
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/v1/issues/*/status"
                         )
-                        .hasAnyRole("STAFF", "ADMIN")
+                        .hasAnyRole(
+                                "STAFF",
+                                "ADMIN"
+                        )
 
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/v1/issues/**"
                         )
                         .hasRole("ADMIN")
+
                         .anyRequest()
                         .authenticated()
                 )
+
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwt ->
                                 jwt.jwtAuthenticationConverter(
@@ -99,7 +114,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(JwtProperties jwtProperties) {
+    public JwtDecoder jwtDecoder(
+            JwtProperties jwtProperties
+    ) {
 
         SecretKey key =
                 Keys.hmacShaKeyFor(
@@ -112,6 +129,7 @@ public class SecurityConfig {
                 .withSecretKey(key)
                 .build();
     }
+
     @Bean
     public Converter<Jwt, ? extends AbstractAuthenticationToken>
     jwtAuthenticationConverter() {
