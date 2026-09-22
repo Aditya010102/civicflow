@@ -279,6 +279,11 @@ class IssuePersistenceIntegrationTest {
                         PageRequest.of(0, 20)
                 );
 
+        assertEquals(
+                1,
+                result.getTotalElements()
+        );
+
         assertTrue(
                 result.getContent()
                         .stream()
@@ -327,6 +332,11 @@ class IssuePersistenceIntegrationTest {
                         specification,
                         PageRequest.of(0, 20)
                 );
+
+        assertEquals(
+                1,
+                result.getTotalElements()
+        );
 
         assertTrue(
                 result.getContent()
