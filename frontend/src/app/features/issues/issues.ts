@@ -6,10 +6,12 @@ import {
 
 import { IssueService } from './services/issue';
 import { IssueResponse } from '../../core/models/issue-response';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-issues',
     standalone: true,
+    imports: [RouterLink],
     templateUrl: './issues.html',
     styleUrl: './issues.scss'
 })

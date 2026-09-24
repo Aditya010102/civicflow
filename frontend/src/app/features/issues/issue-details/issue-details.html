@@ -1,0 +1,114 @@
+<section class="issue-details-page">
+
+    <header class="page-header">
+
+        <div>
+            <h1>Issue Details</h1>
+
+            <p>
+                View the complete information for this civic issue.
+            </p>
+        </div>
+
+        <button type="button" class="back-button" (click)="goBack()">
+            Back to Issues
+        </button>
+
+    </header>
+
+
+    @if (isLoading) {
+
+    <div class="state-message">
+        Loading issue...
+    </div>
+
+    }
+
+
+    @if (errorMessage) {
+
+    <div class="state-message error">
+        {{ errorMessage }}
+    </div>
+
+    }
+
+
+    @if (!isLoading && !errorMessage && issue) {
+
+    <article class="issue-card">
+
+        <div class="issue-header">
+
+            <div>
+                <span class="issue-label">
+                    Issue #{{ issue.id }}
+                </span>
+
+                <h2>
+                    {{ issue.title }}
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="issue-grid">
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Status
+                </span>
+
+                <span>
+                    {{ issue.status }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Priority
+                </span>
+
+                <span>
+                    {{ issue.priority }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Created
+                </span>
+
+                <span>
+                    {{ issue.createdAt }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="description-section">
+
+            <h3>Description</h3>
+
+            <p>
+                {{ issue.description }}
+            </p>
+
+        </div>
+
+    </article>
+
+    }
+
+</section>

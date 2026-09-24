@@ -64,7 +64,9 @@
                 <tr>
 
                     <td>
-                        {{ issue.id }}
+                        <a [routerLink]="['/issues', issue.id]">
+                            {{ issue.id }}
+                        </a>
                     </td>
 
                     <td>
