@@ -1,18 +1,100 @@
 <section class="issues-page">
 
-  <div class="page-header">
-    <div>
-      <h1>Issues</h1>
-      <p>Manage and track civic issues.</p>
-    </div>
-  </div>
+    <header class="page-header">
 
-  <div class="empty-state">
-    <h2>Issues</h2>
-    <p>
-      The issue management interface will be implemented in the
-      upcoming parts.
-    </p>
-  </div>
+        <div>
+            <h1>Issues</h1>
+
+            <p>
+                Manage and track civic issues.
+            </p>
+        </div>
+
+    </header>
+
+
+    @if (isLoading) {
+
+    <div class="state-message">
+        Loading issues...
+    </div>
+
+    }
+
+
+    @if (errorMessage) {
+
+    <div class="state-message error">
+        {{ errorMessage }}
+    </div>
+
+    }
+
+
+    @if (!isLoading && !errorMessage) {
+
+    @if (issues.length === 0) {
+
+    <div class="state-message">
+        No issues found.
+    </div>
+
+    } @else {
+
+    <div class="issues-table-wrapper">
+
+        <table class="issues-table">
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Created</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @for (issue of issues; track issue.id) {
+
+                <tr>
+
+                    <td>
+                        {{ issue.id }}
+                    </td>
+
+                    <td>
+                        {{ issue.title }}
+                    </td>
+
+                    <td>
+                        {{ issue.status }}
+                    </td>
+
+                    <td>
+                        {{ issue.priority }}
+                    </td>
+
+                    <td>
+                        {{ issue.createdAt }}
+                    </td>
+
+                </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    }
+
+    }
 
 </section>
