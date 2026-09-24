@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 
 import { AuthState } from './auth-state.model';
+import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,10 @@ export class AuthStateService {
 
   readonly authState =
     this.state.asReadonly();
+
+  constructor(
+    private readonly tokenStorage: TokenStorageService
+  ) { }
 
   isAuthenticated(): boolean {
     return this.state().authenticated;
@@ -43,5 +48,22 @@ export class AuthStateService {
       authenticated: false,
       accessToken: null
     });
+  }
+
+  restoreSession(): void {
+
+    const accessToken =
+      this.tokenStorage.getToken();
+
+    if (accessToken) {
+
+      this.setAuthenticated(
+        accessToken
+      );
+
+      return;
+    }
+
+    this.clearAuthentication();
   }
 }
