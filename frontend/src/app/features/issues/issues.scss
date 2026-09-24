@@ -1,0 +1,31 @@
+.issues-page {
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    p {
+        margin-top: 0.5rem;
+        color: #666;
+    }
+}
+
+.empty-state {
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    h2 {
+        margin-top: 0;
+    }
+
+    p {
+        color: #666;
+    }
+}

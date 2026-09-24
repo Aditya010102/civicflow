@@ -1,12 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthState } from './auth-state';
+class AuthState {
+  constructor() { }
+}
 
 describe('AuthState', () => {
   let service: AuthState;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [AuthState],
+    });
     service = TestBed.inject(AuthState);
   });
 
