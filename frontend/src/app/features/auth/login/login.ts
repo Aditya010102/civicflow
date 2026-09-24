@@ -5,7 +5,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -42,11 +41,11 @@ export class LoginComponent {
   });
 
   constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly authService: AuthService
   ) { }
 
   submit(): void {
+
     this.errorMessage = '';
 
     if (this.loginForm.invalid) {
@@ -61,8 +60,7 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          console.log('Login successful');
-          //  this.router.navigate(['/dashboard']);
+          this.errorMessage = '';
         },
 
         error: () => {
