@@ -1,12 +1,14 @@
+import { inject } from '@angular/core';
 import {
+    HttpErrorResponse,
     HttpInterceptorFn
 } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { AuthStateService } from '../auth/auth-state.service';
+import { TokenStorageService } from '../auth/token-storage.service';
 
-import { inject } from '@angular/core';
 
-import {
-    TokenStorageService
-} from '../auth/token-storage.service';
 
 export const authInterceptor: HttpInterceptorFn =
     (req, next) => {
@@ -14,19 +16,44 @@ export const authInterceptor: HttpInterceptorFn =
         const tokenStorage =
             inject(TokenStorageService);
 
+        const authState =
+            inject(AuthStateService);
+
+        const router =
+            inject(Router);
+
         const token =
             tokenStorage.getToken();
 
-        if (!token) {
-            return next(req);
-        }
+        let authReq = req;
 
-        const authRequest =
-            req.clone({
+        if (token) {
+            authReq = req.clone({
                 setHeaders: {
                     Authorization: `Bearer ${token}`
                 }
             });
+        }
 
-        return next(authRequest);
+        return next(authReq).pipe(
+
+            catchError((error: HttpErrorResponse) => {
+
+                if (error.status === 401) {
+
+                    tokenStorage.removeToken();
+
+                    authState.clearAuthentication();
+
+                    router.navigate(['/login'], {
+                        queryParams: {
+                            returnUrl: router.url
+                        }
+                    });
+                }
+
+                return throwError(() => error);
+            })
+
+        );
     };
