@@ -1,10 +1,17 @@
 package com.civicflow.core.event;
 
+import com.civicflow.entity.ProcessedEventEntity;
+import com.civicflow.repository.ProcessedEventRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
 
 @Component
 public class IssueEventConsumer {
@@ -12,15 +19,16 @@ public class IssueEventConsumer {
     private static final Logger logger =
             LoggerFactory.getLogger(IssueEventConsumer.class);
 
-    private final ProcessedEventStore processedEventStore;
+    private final ProcessedEventRepository processedEventRepository;
 
     public IssueEventConsumer(
-            ProcessedEventStore processedEventStore
+            ProcessedEventRepository processedEventRepository
     ) {
-        this.processedEventStore =
-                processedEventStore;
+        this.processedEventRepository =
+                processedEventRepository;
     }
 
+    @Transactional
     @KafkaListener(
             topics = "issue-events",
             groupId = "civicflow-issue-consumer",
@@ -39,7 +47,7 @@ public class IssueEventConsumer {
         );
 
         if (
-                processedEventStore.hasBeenProcessed(
+                processedEventRepository.existsByEventId(
                         event.eventId()
                 )
         ) {
@@ -52,6 +60,41 @@ public class IssueEventConsumer {
             return;
         }
 
+        processEvent(event);
+
+        try {
+
+            ProcessedEventEntity processedEvent =
+                    new ProcessedEventEntity(
+                            event.eventId(),
+                            event.eventType().name(),
+                            Instant.now()
+                    );
+
+            processedEventRepository.save(
+                    processedEvent
+            );
+
+        } catch (DataIntegrityViolationException exception) {
+
+            logger.warn(
+                    "Event was already processed concurrently: eventId={}",
+                    event.eventId()
+            );
+
+            return;
+        }
+
+        logger.info(
+                "Event processed successfully: eventId={}",
+                event.eventId()
+        );
+    }
+
+    private void processEvent(
+            IssueEvent event
+    ) {
+
         switch (event.eventType()) {
 
             case ISSUE_CREATED ->
@@ -63,15 +106,6 @@ public class IssueEventConsumer {
                             event.eventType()
                     );
         }
-
-        processedEventStore.markAsProcessed(
-                event.eventId()
-        );
-
-        logger.info(
-                "Event processed successfully: eventId={}",
-                event.eventId()
-        );
     }
 
     private void handleIssueCreated(
