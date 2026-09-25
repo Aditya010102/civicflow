@@ -17,6 +17,7 @@ import {
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 import { AuthStateService } from './core/auth/auth-state.service';
+import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
 
@@ -28,7 +29,8 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withInterceptors([
-        authInterceptor
+        authInterceptor,
+        httpErrorInterceptor
       ])
     ),
 
