@@ -44,6 +44,8 @@ export class AuthStateService {
 
   clearAuthentication(): void {
 
+    this.tokenStorage.removeToken();
+
     this.state.set({
       authenticated: false,
       accessToken: null

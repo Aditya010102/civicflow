@@ -1,0 +1,215 @@
+:host {
+    display: block;
+    min-height: 100vh;
+}
+
+
+// ---------------------------------------------------------
+// Header
+// ---------------------------------------------------------
+
+.app-header {
+    width: 100%;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+
+// ---------------------------------------------------------
+// Header Container
+// ---------------------------------------------------------
+
+.app-header__container {
+    width: 100%;
+    max-width: 1200px;
+    min-height: 64px;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+}
+
+
+// ---------------------------------------------------------
+// CivicFlow Logo
+// ---------------------------------------------------------
+
+.app-logo {
+    color: #111827;
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.app-logo:hover {
+    color: #2563eb;
+}
+
+
+// ---------------------------------------------------------
+// Navigation
+// ---------------------------------------------------------
+
+.app-navigation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+// ---------------------------------------------------------
+// Navigation Links
+// ---------------------------------------------------------
+
+.app-navigation a {
+    position: relative;
+
+    padding: 8px 4px;
+
+    color: #4b5563;
+    font-size: 15px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease;
+}
+
+.app-navigation a:hover {
+    color: #2563eb;
+}
+
+
+// ---------------------------------------------------------
+// Active Navigation Link
+// ---------------------------------------------------------
+
+.app-navigation a.active {
+    color: #2563eb;
+}
+
+.app-navigation a.active::after {
+    content: '';
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 2px;
+
+    background: #2563eb;
+    border-radius: 2px;
+}
+
+
+// ---------------------------------------------------------
+// Logout Button
+// ---------------------------------------------------------
+
+.logout-button {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    padding: 8px 14px;
+
+    background: #ffffff;
+    color: #374151;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.logout-button:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+.logout-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+
+// ---------------------------------------------------------
+// Main Content
+// ---------------------------------------------------------
+
+.app-content {
+    width: 100%;
+    min-height: calc(100vh - 65px);
+    box-sizing: border-box;
+}
+
+
+// ---------------------------------------------------------
+// Responsive
+// ---------------------------------------------------------
+
+@media (max-width: 768px) {
+
+    .app-header__container {
+        min-height: 60px;
+        padding: 0 16px;
+    }
+
+    .app-logo {
+        font-size: 20px;
+    }
+
+    .app-navigation {
+        gap: 12px;
+    }
+
+    .app-navigation a {
+        font-size: 14px;
+    }
+
+    .logout-button {
+        padding: 7px 11px;
+        font-size: 13px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .app-header__container {
+        padding: 0 12px;
+    }
+
+    .app-navigation {
+        gap: 8px;
+    }
+
+    .app-logo {
+        font-size: 18px;
+    }
+
+    .app-navigation a {
+        padding: 6px 2px;
+    }
+
+    .logout-button {
+        padding: 6px 9px;
+    }
+}
