@@ -6,12 +6,9 @@ import com.civicflow.repository.ProcessedEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Component
 public class IssueEventConsumer {
@@ -34,9 +31,7 @@ public class IssueEventConsumer {
             groupId = "civicflow-issue-consumer",
             containerFactory = "issueEventKafkaListenerContainerFactory"
     )
-    public void consume(
-            IssueEvent event
-    ) {
+    public void consume(IssueEvent event) {
 
         logger.info(
                 "Received CivicFlow event: eventId={}, eventType={}, issueId={}, occurredAt={}",
@@ -46,11 +41,15 @@ public class IssueEventConsumer {
                 event.occurredAt()
         );
 
-        if (
-                processedEventRepository.existsByEventId(
-                        event.eventId()
-                )
-        ) {
+        /*
+         * Idempotency check.
+         *
+         * If this event has already been processed,
+         * do not process it again.
+         */
+        if (processedEventRepository.existsByEventId(
+                event.eventId()
+        )) {
 
             logger.warn(
                     "Duplicate event ignored: eventId={}",
@@ -60,30 +59,25 @@ public class IssueEventConsumer {
             return;
         }
 
+        /*
+         * Process the actual event.
+         */
         processEvent(event);
 
-        try {
+        /*
+         * Record the event as processed only after
+         * successful event processing.
+         */
+        ProcessedEventEntity processedEvent =
+                new ProcessedEventEntity(
+                        event.eventId(),
+                        event.eventType().name(),
+                        event.occurredAt()
+                );
 
-            ProcessedEventEntity processedEvent =
-                    new ProcessedEventEntity(
-                            event.eventId(),
-                            event.eventType().name(),
-                            Instant.now()
-                    );
-
-            processedEventRepository.save(
-                    processedEvent
-            );
-
-        } catch (DataIntegrityViolationException exception) {
-
-            logger.warn(
-                    "Event was already processed concurrently: eventId={}",
-                    event.eventId()
-            );
-
-            return;
-        }
+        processedEventRepository.save(
+                processedEvent
+        );
 
         logger.info(
                 "Event processed successfully: eventId={}",
