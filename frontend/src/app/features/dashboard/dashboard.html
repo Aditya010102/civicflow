@@ -1,0 +1,598 @@
+<section class="dashboard">
+
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
+
+    <header class="page-heading">
+
+        <div class="page-heading-content">
+
+            <span class="eyebrow">
+                CIVICFLOW OVERVIEW
+            </span>
+
+            <h1>
+                Community Dashboard
+            </h1>
+
+            <p>
+                Monitor civic issues, track progress and stay informed
+                about community activity from one place.
+            </p>
+
+        </div>
+
+        <div class="page-heading-actions">
+
+            <a routerLink="/issues" class="primary-button">
+                View Issues
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ===================================================== -->
+    <!-- LOADING STATE -->
+    <!-- ===================================================== -->
+
+    @if (isLoading) {
+
+    <div class="dashboard-loading" role="status" aria-live="polite">
+        <span class="loading-spinner"></span>
+
+        <span>
+            Loading dashboard data...
+        </span>
+    </div>
+
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- ERROR STATE -->
+    <!-- ===================================================== -->
+
+    @if (errorMessage) {
+
+    <div class="dashboard-error" role="alert">
+
+        <div class="error-icon">
+            !
+        </div>
+
+        <div class="error-content">
+
+            <strong>
+                Dashboard data unavailable
+            </strong>
+
+            <span>
+                {{ errorMessage }}
+            </span>
+
+        </div>
+
+    </div>
+
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- KEY STATISTICS -->
+    <!-- ===================================================== -->
+
+    <section class="stats-grid" aria-label="CivicFlow statistics">
+
+        <!-- Total Issues -->
+
+        <article class="stat-card">
+
+            <div class="stat-icon stat-icon-total">
+                #
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Total Issues
+                </span>
+
+                <strong class="stat-value">
+                    {{ summary?.total ?? 0 }}
+                </strong>
+
+                <small>
+                    All reported civic issues
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <!-- Reported -->
+
+        <article class="stat-card">
+
+            <div class="stat-icon stat-icon-reported">
+                R
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Reported
+                </span>
+
+                <strong class="stat-value">
+                    {{ summary?.reported ?? 0 }}
+                </strong>
+
+                <small>
+                    Awaiting processing
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <!-- Resolved -->
+
+        <article class="stat-card">
+
+            <div class="stat-icon stat-icon-resolved">
+                ✓
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Resolved
+                </span>
+
+                <strong class="stat-value">
+                    {{ summary?.resolved ?? 0 }}
+                </strong>
+
+                <small>
+                    Successfully completed
+                </small>
+
+            </div>
+
+        </article>
+
+
+        <!-- Critical -->
+
+        <article class="stat-card">
+
+            <div class="stat-icon stat-icon-critical">
+                !
+            </div>
+
+            <div class="stat-content">
+
+                <span class="stat-label">
+                    Critical
+                </span>
+
+                <strong class="stat-value">
+                    {{ summary?.critical ?? 0 }}
+                </strong>
+
+                <small>
+                    Requires attention
+                </small>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- ISSUE LIFECYCLE -->
+    <!-- ===================================================== -->
+
+    <section class="status-overview">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    ISSUE LIFECYCLE
+                </span>
+
+                <h2>
+                    Issue Status Overview
+                </h2>
+
+                <p>
+                    Track how reported issues move through CivicFlow.
+                </p>
+
+            </div>
+
+            <a routerLink="/issues" class="text-link">
+                Manage Issues →
+            </a>
+
+        </div>
+
+
+        <div class="status-grid">
+
+            <!-- Reported -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    Reported
+                </span>
+
+                <strong>
+                    {{ summary?.reported ?? 0 }}
+                </strong>
+
+            </div>
+
+
+            <!-- Acknowledged -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    Acknowledged
+                </span>
+
+                <strong>
+                    {{ summary?.acknowledged ?? 0 }}
+                </strong>
+
+            </div>
+
+
+            <!-- Assigned -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    Assigned
+                </span>
+
+                <strong>
+                    {{ summary?.assigned ?? 0 }}
+                </strong>
+
+            </div>
+
+
+            <!-- In Progress -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    In Progress
+                </span>
+
+                <strong>
+                    {{ summary?.inProgress ?? 0 }}
+                </strong>
+
+            </div>
+
+
+            <!-- Resolved -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    Resolved
+                </span>
+
+                <strong>
+                    {{ summary?.resolved ?? 0 }}
+                </strong>
+
+            </div>
+
+
+            <!-- Closed -->
+
+            <div class="status-item">
+
+                <span class="status-label">
+                    Closed
+                </span>
+
+                <strong>
+                    {{ summary?.closed ?? 0 }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- MAIN DASHBOARD -->
+    <!-- ===================================================== -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- ================================================= -->
+        <!-- RECENT ISSUES -->
+        <!-- ================================================= -->
+
+        <article class="panel recent-issues-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        ACTIVITY
+                    </span>
+
+                    <h2>
+                        Recent Issues
+                    </h2>
+
+                    <p>
+                        Latest community reports submitted to CivicFlow.
+                    </p>
+
+                </div>
+
+                <a routerLink="/issues" class="text-link">
+                    View all →
+                </a>
+
+            </div>
+
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <h3>
+                    No recent activity
+                </h3>
+
+                <p>
+                    Recent civic issues will appear here as they are
+                    submitted and processed.
+                </p>
+
+                <a routerLink="/issues" class="secondary-button">
+                    Browse Issues
+                </a>
+
+            </div>
+
+        </article>
+
+
+        <!-- ================================================= -->
+        <!-- SYSTEM STATUS -->
+        <!-- ================================================= -->
+
+        <article class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        SYSTEM
+                    </span>
+
+                    <h2>
+                        Service Status
+                    </h2>
+
+                    <p>
+                        Core CivicFlow services and infrastructure.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="service-list">
+
+
+                <!-- CivicFlow API -->
+
+                <div class="service-row">
+
+                    <div class="service-info">
+
+                        <div class="service-status-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                CivicFlow API
+                            </strong>
+
+                            <span>
+                                Spring Boot backend
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="service-badge">
+                        ONLINE
+                    </span>
+
+                </div>
+
+
+                <!-- Database -->
+
+                <div class="service-row">
+
+                    <div class="service-info">
+
+                        <div class="service-status-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Database
+                            </strong>
+
+                            <span>
+                                PostgreSQL
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="service-badge">
+                        ONLINE
+                    </span>
+
+                </div>
+
+
+                <!-- Kafka -->
+
+                <div class="service-row">
+
+                    <div class="service-info">
+
+                        <div class="service-status-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Event System
+                            </strong>
+
+                            <span>
+                                Apache Kafka
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="service-badge">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- QUICK ACTIONS -->
+    <!-- ===================================================== -->
+
+    <section class="quick-actions">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    QUICK ACTIONS
+                </span>
+
+                <h2>
+                    Manage CivicFlow
+                </h2>
+
+                <p>
+                    Quickly access the areas you use most.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="action-grid">
+
+
+            <!-- Manage Issues -->
+
+            <a routerLink="/issues" class="action-card">
+
+                <div class="action-icon">
+                    #
+                </div>
+
+                <div class="action-content">
+
+                    <strong>
+                        Manage Issues
+                    </strong>
+
+                    <span>
+                        View, search and track community reports
+                    </span>
+
+                </div>
+
+                <span class="arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <!-- Notifications -->
+
+            <a routerLink="/notifications" class="action-card">
+
+                <div class="action-icon">
+                    ●
+                </div>
+
+                <div class="action-content">
+
+                    <strong>
+                        Notifications
+                    </strong>
+
+                    <span>
+                        View important issue and system updates
+                    </span>
+
+                </div>
+
+                <span class="arrow">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+</section>

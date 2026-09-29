@@ -1,0 +1,141 @@
+<div class="app-shell">
+
+    <!-- Mobile overlay -->
+    @if (isSidebarOpen) {
+    <div class="sidebar-overlay" (click)="closeSidebar()">
+    </div>
+    }
+
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                CF
+            </div>
+
+            <div class="brand-text">
+                <strong>CivicFlow</strong>
+                <span>Community Platform</span>
+            </div>
+
+        </div>
+
+        <nav class="navigation">
+
+            <div class="nav-section-title">
+                MAIN
+            </div>
+
+            <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-item" (click)="closeSidebar()">
+
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+
+            </a>
+
+            <a routerLink="/issues" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+
+                <span class="nav-icon">!</span>
+                <span>Issues</span>
+
+            </a>
+
+            <a routerLink="/notifications" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+
+                <span class="nav-icon">●</span>
+                <span>Notifications</span>
+
+            </a>
+
+            <div class="nav-section-title">
+                MANAGEMENT
+            </div>
+
+            <a routerLink="/departments" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+
+                <span class="nav-icon">▦</span>
+                <span>Departments</span>
+
+            </a>
+
+            <a routerLink="/profile" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+
+                <span class="nav-icon">◯</span>
+                <span>Profile</span>
+
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+
+                <div>
+                    <strong>System Online</strong>
+                    <small>All services operational</small>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main area -->
+    <div class="main-area">
+
+        <!-- Header -->
+        <header class="topbar">
+
+            <button class="menu-button" type="button" (click)="toggleSidebar()">
+
+                ☰
+
+            </button>
+
+            <div class="topbar-title">
+                <span class="topbar-label">
+                    CIVICFLOW
+                </span>
+
+                <span class="topbar-divider">
+                    /
+                </span>
+
+                <span class="topbar-current">
+                    Community Management
+                </span>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button type="button" class="icon-button" routerLink="/notifications" title="Notifications">
+
+                    ●
+
+                </button>
+
+                <div class="user-avatar">
+                    A
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Page content -->
+        <main class="page-content">
+
+            <router-outlet></router-outlet>
+
+        </main>
+
+    </div>
+
+</div>
